@@ -39,6 +39,13 @@ export default function SignUpPage() {
       }
     },
     onSuccess: () => {
+      setFormData({
+        email: "",
+        username: "",
+        fullName: "",
+        password: "",
+      });
+
       toast.success("Account created successfully");
     },
   });

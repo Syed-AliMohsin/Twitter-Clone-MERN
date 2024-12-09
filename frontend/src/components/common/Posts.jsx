@@ -4,13 +4,17 @@ import { useEffect } from "react";
 import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
 
-export default function Posts({ feedType }) {
+export default function Posts({ feedType, username, userId }) {
   const getPostEndpoint = () => {
     switch (feedType) {
       case "forYou":
         return "/api/posts/all";
       case "following":
         return "/api/posts/following";
+      case "posts":
+        return `/api/posts/user/${username}`;
+      case "likes":
+        return `/api/posts/likes/${userId}`;
       default:
         return "/api/posts/all";
     }
@@ -43,7 +47,7 @@ export default function Posts({ feedType }) {
 
   useEffect(() => {
     refetch();
-  }, [feedType, refetch]);
+  }, [feedType, refetch, username]);
 
   return (
     <>
@@ -54,11 +58,9 @@ export default function Posts({ feedType }) {
           <PostSkeleton />
         </div>
       )}
-
       {!isLoading && !isRefetching && posts?.length === 0 && (
         <p className='text-center my-4'>No posts in this tab. Switch 👻</p>
       )}
-
       {!isLoading && !isRefetching && posts && (
         <div>
           {posts.map((post) => (

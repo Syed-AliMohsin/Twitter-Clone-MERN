@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function EditProfileModal() {
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
+
+export default function EditProfileModal({ authUser }) {
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
@@ -11,9 +13,25 @@ export default function EditProfileModal() {
     currentPassword: "",
   });
 
+  const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    if (authUser) {
+      setFormData({
+        fullName: authUser.fullName,
+        username: authUser.username,
+        email: authUser.email,
+        bio: authUser.bio,
+        link: authUser.link,
+        newPassword: "",
+        currentPassword: "",
+      });
+    }
+  }, [authUser]);
 
   return (
     <>
@@ -30,7 +48,7 @@ export default function EditProfileModal() {
             className='flex flex-col gap-4'
             onSubmit={(e) => {
               e.preventDefault();
-              alert("Profile updated successfully");
+              updateProfile(formData);
             }}
           >
             <div className='flex flex-wrap gap-2'>
@@ -94,7 +112,9 @@ export default function EditProfileModal() {
               name='link'
               onChange={handleInputChange}
             />
-            <button className='btn btn-primary rounded-full btn-sm text-white'>Update</button>
+            <button className='btn btn-primary rounded-full btn-sm text-white'>
+              {isUpdatingProfile ? "Updating..." : "Update"}
+            </button>
           </form>
         </div>
         <form method='dialog' className='modal-backdrop'>

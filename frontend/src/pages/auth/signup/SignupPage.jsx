@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 import XSvg from "../../../components/svgs/X";
@@ -18,6 +18,8 @@ export default function SignUpPage() {
     password: "",
   });
 
+  const queryClient = useQueryClient();
+  
   const { mutate, isError, isPending, error } = useMutation({
     mutationFn: async ({ email, username, fullName, password }) => {
       try {
@@ -47,6 +49,7 @@ export default function SignUpPage() {
       });
 
       toast.success("Account created successfully");
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
     },
   });
 
